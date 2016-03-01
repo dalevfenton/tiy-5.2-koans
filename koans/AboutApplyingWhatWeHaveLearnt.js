@@ -32,16 +32,21 @@ describe("About Applying What We Have Learnt", function() {
         }
     }
 
-    expect(productsICanEat.length).toBe(FILL_ME_IN);
+    expect(productsICanEat.length).toBe(1);
   });
 
   it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (functional)", function () {
 
       var productsICanEat = [];
-
       /* solve using filter() & all() / any() */
+      productsICanEat = _(products).filter(function(product){
+        if(product.containsNuts === false ){
+          return !_(product.ingredients).any(function(ingredient){ return ingredient === "mushrooms"; });
+        }else{
+          return false;
+        }});
 
-      expect(productsICanEat.length).toBe(FILL_ME_IN);
+      expect(productsICanEat.length).toBe(1);
   });
 
   /*********************************************************************************/
@@ -55,14 +60,17 @@ describe("About Applying What We Have Learnt", function() {
       }
     }
 
-    expect(sum).toBe(FILL_ME_IN);
+    expect(sum).toBe(233168);
   });
 
   it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (functional)", function () {
-
-    var sum = FILL_ME_IN;    /* try chaining range() and reduce() */
-
-    expect(233168).toBe(FILL_ME_IN);
+    var sum = _(_.range(1000)).reduce(function(x, y){
+      if(y%3===0 || y%5===0){
+        return x+y;
+      }else {
+        return x;
+      }});    /* try chaining range() and reduce() */
+    expect(233168).toBe(sum);
   });
 
   /*********************************************************************************/
@@ -75,20 +83,28 @@ describe("About Applying What We Have Learnt", function() {
         }
     }
 
-    expect(ingredientCount['mushrooms']).toBe(FILL_ME_IN);
+    expect(ingredientCount['mushrooms']).toBe(2);
   });
 
   it("should count the ingredient occurrence (functional)", function () {
     var ingredientCount = { "{ingredient name}": 0 };
 
     /* chain() together map(), flatten() and reduce() */
-
-    expect(ingredientCount['mushrooms']).toBe(FILL_ME_IN);
+    ingredientCount = _(products).chain()
+                              .map(function(product){ return product.ingredients; })
+                              .flatten()
+                              .reduce(function(accum, ingredient){
+                                accum[ingredient] = (accum[ingredient] || 0) + 1;
+                                console.log(accum);
+                                console.log(ingredient);
+                                return accum;
+                              },{}).value();
+                              // console.log(ingredientCount);
+    expect(ingredientCount['mushrooms']).toBe(2);
   });
 
   /*********************************************************************************/
   /* UNCOMMENT FOR EXTRA CREDIT */
-  /*
   it("should find the largest prime factor of a composite number", function () {
 
   });
@@ -98,16 +114,45 @@ describe("About Applying What We Have Learnt", function() {
   });
 
   it("should find the smallest number divisible by each of the numbers 1 to 20", function () {
+    function getFactors(number){
+      return _.filter( _.range(1,number+1), function(divisor){
+          return (number % divisor === 0 && number !== 1);
+      });
+    }
+    // isPrime from http://www.cplusplus.com/forum/general/1125/ modified to js
+    function isPrime(number){
+      var isPrime = true;
+      for(var i=2; i<= Math.sqrt(number); i+=2){
+        if(i%2 === 0){
+          i++;
+        }
+        if(number % i === 0){
+          isPrime = false;
+          break;
+        }
+      }
+      return isPrime;
+    }
 
+  //   var range = _(_.range(1,21)).chain()
+  //                               .map(function(number){
+  //                                 var factors = getFactors(number);
+  //                                 console.log(factors);
+  //                                 var primeFactors = _.filter(factors, isPrime );
+  //                                 console.log(primeFactors);
+  //                                 return primeFactors; })
+  //                               .flatten()
+  //                               .uniq().value();
+  //   console.log(range);
+  //
+  // });
 
-  });
-
-  it("should find the difference between the sum of the squares and the square of the sums", function () {
-
+  it("should find the difference between the sum of the squares and the square of the sums", function (a, b) {
+    return (Math.pow(a,2) + Math.pow(b,2)) - (Math.pow(a+b, 2));
   });
 
   it("should find the 10001st prime", function () {
 
   });
-  */
+
 });
